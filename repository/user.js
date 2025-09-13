@@ -1,5 +1,5 @@
-export const getSingleUserByEmail = async(user_email) => {
-    const queryText = `
+export const getSingleUserByEmail = async (user_email) => {
+  const queryText = `
         SELECT
             u.user_id,
             u.user_email,
@@ -14,21 +14,18 @@ export const getSingleUserByEmail = async(user_email) => {
         WHERE
             u.user_email = $1
         `;
-    const values = [user_email];
+  const values = [user_email];
 
-    const queryResult = await pool.query(queryText, values);
+  const queryResult = await pool.query(queryText, values);
 
-    return queryResult;
-}
+  return queryResult;
+};
 
-export const updateUserProfile = async(client, {
-        user_id,
-        user_name,
-        user_biography,
-        user_country,
-        user_interests,
-    }) => {
-        const queryText = `
+export const updateUserProfile = async (
+  client,
+  { user_id, user_name, user_biography, user_country }
+) => {
+  const queryText = `
         UPDATE
             Users
         SET
@@ -39,15 +36,43 @@ export const updateUserProfile = async(client, {
             user_id = $4
         `;
 
-        const values = [user_name, user_biography, user_country, user_id];
+  const values = [user_name, user_biography, user_country, user_id];
 
-        const queryResult = await client.query(queryText, values);
+  const queryResult = await client.query(queryText, values);
 
-        return queryResult.rowCount > 0;
-    }
+  return queryResult.rowCount > 0;
+};
 
-export const getTagsByUser = async(user_id) => {
-    const queryText = `
+export const deleteUserInterests = async (client, user_id) => {
+  const queryText = `
+  DELETE FROM 
+    User_Interests
+  WHERE
+    user_id = $1
+  `;
+
+  const values = [user_id];
+
+  await client.query(queryText, values);
+};
+
+export const insertUserInterest = async (client, { user_id, tag_id }) => {
+  const queryText = `
+  INSERT INTO
+    User_Interests(user_id, tag_id)
+  VALUES
+    ($1, $2)
+  `;
+
+  const values = [user_id, tag_id];
+
+  const queryResult = await client.query(queryText, values);
+
+  return queryResult.rowCount > 0;
+};
+
+export const getTagsByUser = async (user_id) => {
+  const queryText = `
     SELECT
         t.tag_name
     FROM
@@ -57,18 +82,35 @@ export const getTagsByUser = async(user_id) => {
     ON
         ui.tag_id = t.tag_id
     WHERE
-    ui.user_id = $1
+        ui.user_id = $1
     `;
 
-    const values = {user_id};
+  const values = [user_id];
 
-    const queryResult = await pool.query(queryText, values);
+  const queryResult = await pool.query(queryText, values);
 
-    return queryResult.rows.map((row) => row.tag_name);
-}
+  return queryResult.rows.map((row) => row.tag_name);
+};
 
-export const updatePhoto = async (client, {user_id, user_photo_url}) => {
-    const queryText = `
+export const getTagIdByName = async (client, tagName) => {
+  const queryText = `
+  SELECT
+    t.tag_id
+  FROM
+    Tags t
+  WHERE
+    t.tag_name = $1
+  `;
+
+  const values = [tagName];
+
+  const queryResult = await client.query(queryText, values);
+
+  return queryResult.rows[0];
+};
+
+export const updatePhoto = async (client, { user_id, user_photo_url }) => {
+  const queryText = `
     UPDATE
         Users
     SET
@@ -77,9 +119,9 @@ export const updatePhoto = async (client, {user_id, user_photo_url}) => {
         user_id = $2
     `;
 
-    const values = [user_photo_url, user_id];
+  const values = [user_photo_url, user_id];
 
-    const queryResult = await client.query(queryText, values);
+  const queryResult = await client.query(queryText, values);
 
-    return queryResult.rowCount > 0;
-}
+  return queryResult.rowCount > 0;
+};
