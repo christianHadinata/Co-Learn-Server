@@ -59,7 +59,6 @@ export const login = async (req, res) => {
 
   return res.json({ success: true, token });
 };
-import * as userService from "../services/user.js";
 
 export const getSingleUser = async (req, res) => {
   const { user_email } = req.user;
