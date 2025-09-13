@@ -37,8 +37,11 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // Routes import
-
+import userRoute from "./routes/user.js";
 // Routes
+// localhost:5000/api/v1/users/register
+app.use("/api/v1/users", userRoute);
+
 
 //Error handling
 app.use(errorHandler);
