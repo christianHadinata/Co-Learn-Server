@@ -1,13 +1,21 @@
 import express from "express";
 import {
-    getSingleUser,
-    updateUserProfile,
-    updatePhoto,
+  register,
+  login,
+  getSingleUser,
+  updateUserProfile,
+  updatePhoto,
 } from "../controllers/user.js";
-import {authMiddleware} from "../middleware/authMiddleware.js";
-import {fileUpload} from "../middleware/fileUploader.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
+import { fileUpload } from "../middleware/fileUploader.js";
 
 const router = express.Router();
+
+//  localhost:5000/api/v1/users/register
+router.post("/register", register);
+
+//  localhost:5000/api/v1/users/login
+router.post("/login", login);
 
 //localhost:5000/api/v1/users/
 router.get("/", authMiddleware, getSingleUser);
