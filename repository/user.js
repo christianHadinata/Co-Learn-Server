@@ -57,13 +57,14 @@ export const updateUserProfile = async (
   client,
   { user_id, user_name, user_biography, user_country }
 ) => {
+  console.log({ user_id, user_name, user_biography, user_country });
   const queryText = `
         UPDATE
             Users
         SET
             user_name = $1,
             user_biography = $2,
-            user_country = $3,
+            user_country = $3
         WHERE
             user_id = $4
         `;
@@ -101,6 +102,23 @@ export const insertUserInterest = async (client, { user_id, tag_id }) => {
   const queryResult = await client.query(queryText, values);
 
   return queryResult.rowCount > 0;
+};
+
+export const insertTags = async (client, { tag_name }) => {
+  const queryText = `
+  INSERT INTO
+    Tags(tag_name)
+  VALUES
+    ($1)
+  RETURNING
+    tag_id
+  `;
+
+  const values = [tag_name];
+
+  const queryResult = await client.query(queryText, values);
+
+  return queryResult.rows[0].tag_id;
 };
 
 export const getTagsByUser = async (user_id) => {

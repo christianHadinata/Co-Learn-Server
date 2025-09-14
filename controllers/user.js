@@ -75,15 +75,21 @@ export const updateUserProfile = async (req, res) => {
   const { user_id } = req.user;
   const { user_name, user_biography, user_country, user_interests } = req.body;
 
-  await userService.updateUserProfile({
-    user_id,
-    user_name,
-    user_biography,
-    user_country,
-    user_interests,
-  });
-
-  return res.json({ success: true });
+  try {
+    await userService.updateUserProfile({
+      user_id,
+      user_name,
+      user_biography,
+      user_country,
+      user_interests,
+    });
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to update profile" });
+  }
 };
 
 export const updatePhoto = async (req, res) => {

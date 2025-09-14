@@ -80,8 +80,8 @@ export const login = async ({ user_email, user_password }) => {
 
 export const getSingleUser = async (user_email) => {
   const queryResult = await userRepo.getSingleUserByEmail(user_email);
-  const tagsResult = await userRepo.getTagsByUser(user_id);
   const data = queryResult.rows[0];
+  const tagsResult = await userRepo.getTagsByUser(data.user_id);
 
   const result = {
     user_id: data.user_id,
@@ -92,6 +92,7 @@ export const getSingleUser = async (user_email) => {
     user_photo_url: data.user_photo_url,
     user_interests: tagsResult,
   };
+  console.log(result);
 
   return result;
 };
@@ -116,15 +117,16 @@ export const updateUserProfile = async ({
 
     await userRepo.deleteUserInterests(client, user_id);
 
-    for (tagName of user_interests) {
+    for (const tagName of user_interests) {
       // Cek udah ada belum di tabel Tags yang tag_name nya == tagName
 
       const existingId = await userRepo.getTagIdByName(client, tagName);
+      console.log(existingId);
 
       if (existingId) {
         await userRepo.insertUserInterest(client, {
           user_id,
-          tag_id: existingId,
+          tag_id: existingId.tag_id,
         });
       } else {
         const newTagId = await userRepo.insertTags(client, {
