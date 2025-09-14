@@ -104,5 +104,10 @@ export const updatePhoto = async (req, res) => {
 
   await userService.updatePhoto({ user_id, user_photo_url });
 
-  return res.json({ success: true });
+  return res.json({
+    success: true,
+    data: {
+      user_photo_url,
+    },
+  });
 };

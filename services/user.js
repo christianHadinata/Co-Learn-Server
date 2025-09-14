@@ -65,11 +65,14 @@ export const login = async ({ user_email, user_password }) => {
     throw new UnauthorizedError("Email or Password is invalid");
   }
 
+  console.log(dataUser);
+
   const token = jwt.sign(
     {
       user_id: dataUser.user_id,
       user_email: dataUser.user_email,
       user_name: dataUser.user_name,
+      user_photo_url: dataUser.user_photo_url,
     },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_LIFETIME }
