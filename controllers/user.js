@@ -33,9 +33,12 @@ export const register = async (req, res) => {
       return res.status(400).json({ success: false });
     }
 
+    console.log(result);
+
     return res.status(201).json({ success: true, data: result });
   } catch (error) {
-    return res.status(400).json({ success: false });
+    console.log("heree");
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 

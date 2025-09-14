@@ -23,7 +23,7 @@ export const register = async ({ user_name, user_email, user_password }) => {
     if (getUserByEmailResult.rowCount !== 0) {
       // if (getUserByEmailResult.rows.length > 0) {
       console.log("err");
-      throw new BadRequestError("Email  is already in  use");
+      throw new BadRequestError("Email is already in  use");
     }
 
     console.log("password proceed  to be hashed");
@@ -43,7 +43,7 @@ export const register = async ({ user_name, user_email, user_password }) => {
   } catch (error) {
     console.log(error);
     await client.query("ROLLBACK");
-    // throw error;
+    throw error;
   } finally {
     client.release();
   }
@@ -52,7 +52,9 @@ export const register = async ({ user_name, user_email, user_password }) => {
 export const login = async ({ user_email, user_password }) => {
   const queryResult = await userRepo.getSingleUserByEmail(user_email);
   const dataUser = queryResult.rows[0];
-  // console.log(dataUser);
+  if (!dataUser) {
+    throw new BadRequestError("Email or Password is invalid");
+  }
 
   const isPasswordMatch = await bcrypt.compare(
     user_password,
