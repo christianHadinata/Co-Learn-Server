@@ -38,10 +38,12 @@ app.use(morgan("dev"));
 
 // Routes import
 import userRoute from "./routes/user.js";
+import spaceRoute from "./routes/space.js";
 // Routes
 // localhost:5000/api/v1/users/register
 app.use("/api/v1/users", userRoute);
 
+app.use("/api/v1/space", spaceRoute);
 
 //Error handling
 app.use(errorHandler);
