@@ -1,60 +1,63 @@
 import { getSingleSpace } from "../controllers/space.js";
 import pool from "../db/db.js";
 
-
 // mendapatkan semua space
 export const getAllSpaces = async () => {
-    //query ke db
-    const queryText = `
+  //query ke db
+  const queryText = `
     SELECT
-        s.space_id,
+        s.learning_space_id,
         s.space.title,
+        s.space_photo_url,
         s.space_description,
+        s.created_at,
         s.last_updated_at,
-        s.space_photo_url
+        COUNT(lsm.user_id) AS member_count
     FROM
         Learning_Spaces s
     LEFT JOIN
         Learning_Space_Member lsm
-        ON s.space_id = lsm.space_id
+        ON s.learning_space_id = lsm.learning_space_id
     GROUP BY
-        s.space_id,
-        s.space_title,
-        s.space_description,
-        s.last_updated_at,
-        s.space_photo_url
+        s.learning_space_id,
+    ORDER BY
+        s.created_at DESC;
     `;
 
-    // execute query
-    const queryResult = await pool.query(queryText);
+  // execute query
+  const queryResult = await pool.query(queryText);
 
-    //result
-    return queryResult;
+  //result
+  return queryResult.rows;
 };
 
 export const getSingleSpace = async (learning_space_id) => {
-    const queryText = `
+  const queryText = `
     SELECT
-        s.space_id,
+        s.learning_space_id,
         s.space_title,
+        s.space_photo_url,
         s.space_description,
+        s.created_at,
         s.last_updated_at,
-        s.space_photo_url
+        u.user_name
     FROM
         Learning_Spaces s
     LEFT JOIN
         Learning_Space_Member lsm
-        ON s.space_id = lsm.space_id
+        ON s.learning_space_id = lsm.learning_space_id
+    LEFT JOIN
+        Users u
+        ON s.user_id = u.user_id
     WHERE
-        s.space_id = $1
-    `
+        s.learning_space_id = $1
+    `;
 
-    const values = [learning_space_id];
+  const values = [learning_space_id];
 
-    //execute query
-    const queryResult = await pool.query(queryText, values);
+  //execute query
+  const queryResult = await pool.query(queryText, values);
 
-    //result
-    return queryResult;
-
-}
+  //result
+  return queryResult;
+};
