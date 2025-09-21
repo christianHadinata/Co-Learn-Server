@@ -1,8 +1,6 @@
 import pool from "../db/db.js";
 import { BadRequestError } from "../errors/badRequestError.js";
 import * as spaceRepo from "../repository/space.js";
-import { UnauthorizedError } from "../errors/UnauthorizedError.js";
-import jwt from "jsonwebtoken";
 
 export const getAllSpaces = async () => {
   const result = await spaceRepo.getAllSpaces();
@@ -21,6 +19,7 @@ export const getSingleSpace = async (learning_space_id) => {
   }
 
   return result.rows[0];
+};
 
 export const create_learning_space = async ({
   space_title,
