@@ -92,3 +92,29 @@ export const create_learning_space = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const getRelatedSpaces = async (req, res) => {
+  try {
+    const { learning_space_id } = req.params;
+
+    if (!learning_space_id) {
+      throw new BadRequestError("Invalid learning space ID provided.");
+    }
+
+    const result = await spaceService.getRelatedSpaces(
+      parseInt(learning_space_id)
+    );
+
+    if (!result || result.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No related learning spaces found with matching tags.",
+        data: [],
+      });
+    }
+
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};

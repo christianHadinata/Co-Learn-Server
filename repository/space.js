@@ -6,7 +6,7 @@ export const getAllSpaces = async () => {
   const queryText = `
     SELECT
         s.learning_space_id,
-        s.space.title,
+        s.space_title,
         s.space_photo_url,
         s.space_description,
         s.created_at,
@@ -18,7 +18,7 @@ export const getAllSpaces = async () => {
         Learning_Space_Member lsm
         ON s.learning_space_id = lsm.learning_space_id
     GROUP BY
-        s.learning_space_id,
+        s.learning_space_id
     ORDER BY
         s.created_at DESC;
     `;
@@ -39,7 +39,7 @@ export const getSingleSpace = async (learning_space_id) => {
         s.space_description,
         s.created_at,
         s.last_updated_at,
-        u.user_name
+        u.user_name AS creator
     FROM
         Learning_Spaces s
     LEFT JOIN
@@ -58,7 +58,64 @@ export const getSingleSpace = async (learning_space_id) => {
   const queryResult = await pool.query(queryText, values);
 
   //result
-  return queryResult;
+  return queryResult.rows[0];
+};
+
+export const getPrerequisites = async (learning_space_id) => {
+  const queryText = `
+  SELECT
+    t.tag_name
+  FROM
+    Learning_Space_Prerequisites lsp
+  JOIN
+    Tags t
+  ON
+    lsp.tag_id = t.tag_id
+  WHERE
+    lsp.learning_space_id = $1;
+  `;
+
+  const values = [learning_space_id];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rows.map((row) => row.tag_name);
+};
+
+export const getRelatedSpaces = async (learning_space_id) => {
+  const queryText = `
+    SELECT
+      lsp2.learning_space_id,
+      ls.space_title,
+      ls.space_photo_url,
+      ls.last_updated_at,
+      COUNT(lsp2.tag_id) AS matching_tag_count,
+      COUNT(lsm.user_id) AS member_count
+    FROM
+      Learning_Space_Prerequisites lsp1
+    JOIN
+      Learning_Space_Prerequisites lsp2 
+      ON lsp1.tag_id = lsp2.tag_id
+    JOIN
+      Learning_Spaces ls 
+      ON lsp2.learning_space_id = ls.learning_space_id
+    LEFT JOIN
+      Learning_Space_Member lsm
+      ON lsp2.learning_space_id = lsm.learning_space_id
+    WHERE
+      lsp1.learning_space_id = $1
+      AND lsp2.learning_space_id != $1
+    GROUP BY
+      lsp2.learning_space_id, ls.space_title, ls.space_photo_url, ls.last_updated_at
+    ORDER BY
+      matching_tag_count DESC
+    LIMIT 5;
+  `;
+  const values = [learning_space_id];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rows;
 };
 
 // Mendapatkan space berdasarkan space_title

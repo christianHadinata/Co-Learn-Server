@@ -4,12 +4,13 @@ import * as spaceRepo from "../repository/space.js";
 
 export const getAllSpaces = async () => {
   const result = await spaceRepo.getAllSpaces();
+  console.log(result);
 
   if (!result) {
     throw new Error("No learning spaces created");
   }
 
-  return result.rows;
+  return result;
 };
 
 export const getSingleSpace = async (learning_space_id) => {
@@ -18,7 +19,13 @@ export const getSingleSpace = async (learning_space_id) => {
     throw new Error("Learning space not found");
   }
 
-  return result.rows[0];
+  const prerequisites = await spaceRepo.getPrerequisites(learning_space_id);
+
+  console.log(prerequisites);
+  return {
+    ...result,
+    prerequisites,
+  };
 };
 
 export const create_learning_space = async ({
@@ -84,4 +91,10 @@ export const create_learning_space = async ({
   } finally {
     client.release();
   }
+};
+
+export const getRelatedSpaces = async (learning_space_id) => {
+  const result = await spaceRepo.getRelatedSpaces(learning_space_id);
+
+  return result;
 };
