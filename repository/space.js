@@ -30,19 +30,19 @@ export const getSingleSpaceByTitle = async (space_title) => {
 
 export const insertSpace = async (
   client,
-  { space_title, space_description, learning_space_prerequisites }
+  { space_title, space_photo_url, space_description, user_id }
 ) => {
   // query ke db
   const queryText = `
     INSERT INTO
-        Learning_Spaces(space_title, space_description, learning_space_prerequisites)
+        Learning_Spaces(space_title, space_photo_url, space_description, user_id)
     VALUES
-        ($1, $2, $3)
+        ($1, $2, $3, $4)
     RETURNING
         learning_space_id
     `;
   // value user_name,user_email, user_password
-  const values = [space_title, space_description, learning_space_prerequisites];
+  const values = [space_title, space_photo_url, space_description, user_id];
 
   // execute query
   const queryResult = await client.query(queryText, values);
@@ -98,24 +98,4 @@ export const insertTags = async (client, { tag_name }) => {
   const queryResult = await client.query(queryText, values);
 
   return queryResult.rows[0].tag_id;
-};
-
-export const updatePhoto = async (
-  client,
-  { learning_space_id, space_photo_url }
-) => {
-  const queryText = `
-    UPDATE
-        Learning_Spaces
-    SET
-        space_photo_url = $1
-    WHERE
-        learning_space_id = $2
-    `;
-
-  const values = [learning_space_id, space_photo_url];
-
-  const queryResult = await client.query(queryText, values);
-
-  return queryResult.rowCount > 0;
 };

@@ -5,9 +5,12 @@ import { fileUpload } from "../middleware/fileUploader.js";
 
 const router = express.Router();
 
-//  localhost:5000/api/v1/space/create_learning_space
-router.post("/create_learning_space", create_learning_space);
-
-router.post("/space_picture", authMiddleware, fileUpload("./public"), setPhoto);
+//  localhost:5000/api/v1/spaces/create_learning_space
+router.post(
+  "/create_learning_space",
+  authMiddleware,
+  fileUpload("./public"),
+  create_learning_space
+);
 
 export default router;

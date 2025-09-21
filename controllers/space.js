@@ -2,9 +2,19 @@ import * as spaceService from "../services/space.js";
 import { BadRequestError } from "../errors/badRequestError.js";
 
 export const create_learning_space = async (req, res) => {
+  const { user_id } = req.user;
+
   //nerima input dari textfield FE
   const { space_title, space_description, learning_space_prerequisites } =
     req.body;
+
+  // foto thumbnail learning space
+  if (!req.files || !req.files["space_photo"]) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Photo is Required" });
+  }
+  const space_photo_url = req.files["space_photo"][0].filename;
 
   //cek apakah space title sudah diisi
   if (!space_title) {
@@ -24,7 +34,9 @@ export const create_learning_space = async (req, res) => {
   try {
     const result = await spaceService.create_learning_space({
       space_title,
+      space_photo_url,
       space_description,
+      user_id,
       learning_space_prerequisites,
     });
 
@@ -39,24 +51,4 @@ export const create_learning_space = async (req, res) => {
     console.log("heree");
     return res.status(400).json({ success: false, message: error.message });
   }
-};
-
-export const setPhoto = async (req, res) => {
-  const { user_id } = req.user;
-
-  if (!req.files || !req.files["space_photo"]) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Photo is Required" });
-  }
-  const space_photo_url = req.files["space_photo"][0].filename;
-
-  await spaceService.updatePhoto({ user_id, space_photo_url });
-
-  return res.json({
-    success: true,
-    data: {
-      space_photo_url,
-    },
-  });
 };

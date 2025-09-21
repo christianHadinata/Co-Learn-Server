@@ -6,7 +6,9 @@ import jwt from "jsonwebtoken";
 
 export const create_learning_space = async ({
   space_title,
+  space_photo_url,
   space_description,
+  user_id,
   learning_space_prerequisites,
 }) => {
   const client = await pool.connect();
@@ -27,26 +29,31 @@ export const create_learning_space = async ({
     // repo
     const result = await spaceRepo.insertSpace(client, {
       space_title,
+      space_photo_url,
       space_description,
+      user_id,
     });
 
-    const existingId = await spaceRepo.getTagIdByName(client, tagName);
-    console.log(existingId);
+    // Cek udah ada belum di tabel Tags yang tag_name nya == tagName
+    for (const tagName of learning_space_prerequisites) {
+      const existingId = await spaceRepo.getTagIdByName(client, tagName);
+      console.log(existingId);
 
-    if (existingId) {
-      await spaceRepo.insertSpaceTag(client, {
-        learning_space_id,
-        tag_id: existingId.tag_id,
-      });
-    } else {
-      const newTagId = await spaceRepo.insertTags(client, {
-        tag_name: tagName,
-      });
+      if (existingId) {
+        await spaceRepo.insertSpaceTag(client, {
+          learning_space_id,
+          tag_id: existingId.tag_id,
+        });
+      } else {
+        const newTagId = await spaceRepo.insertTags(client, {
+          tag_name: tagName,
+        });
 
-      await spaceRepo.insertSpaceTag(client, {
-        learning_space_id,
-        tag_id: existingId.tag_id,
-      });
+        await spaceRepo.insertSpaceTag(client, {
+          learning_space_id,
+          tag_id: newTagId,
+        });
+      }
     }
 
     await client.query("COMMIT");
@@ -56,23 +63,6 @@ export const create_learning_space = async ({
     console.log(error);
     await client.query("ROLLBACK");
     throw error;
-  } finally {
-    client.release();
-  }
-};
-
-export const setPhoto = async ({ user_id, space_photo_url }) => {
-  const client = await pool.connect();
-
-  try {
-    await client.query("BEGIN");
-    await spaceRepo.setPhoto(client, { user_id, space_photo_url });
-
-    await client.query("COMMIT");
-    return true;
-  } catch (error) {
-    console.log(error);
-    await client.query("ROLLBACK");
   } finally {
     client.release();
   }

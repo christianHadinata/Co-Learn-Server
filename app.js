@@ -42,7 +42,7 @@ import spaceRoute from "./routes/space.js";
 // Routes
 // localhost:5000/api/v1/users/register
 app.use("/api/v1/users", userRoute);
-app.use("api/v1/space", spaceRoute);
+app.use("/api/v1/spaces", spaceRoute);
 
 //Error handling
 app.use(errorHandler);
