@@ -36,16 +36,17 @@ export const create_learning_space = async (req, res) => {
   const { user_id } = req.user;
 
   //nerima input dari textfield FE
-  const { space_title, space_description, learning_space_prerequisites } =
-    req.body;
+  const { space_title, space_description } = req.body;
 
-  // foto thumbnail learning space
-  if (!req.files || !req.files["space_photo"]) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Photo is Required" });
-  }
-  const space_photo_url = req.files["space_photo"][0].filename;
+  let { learning_space_prerequisites } = req.body;
+
+  learning_space_prerequisites = JSON.parse(learning_space_prerequisites);
+
+  console.log({
+    space_title,
+    space_description,
+    learning_space_prerequisites,
+  });
 
   //cek apakah space title sudah diisi
   if (!space_title) {
@@ -56,9 +57,17 @@ export const create_learning_space = async (req, res) => {
     throw new BadRequestError("Space description is required");
   }
   //  memastikan prerequisite tag sudah diisi
-  if (!learning_space_prerequisites) {
+  if (learning_space_prerequisites.length === 0) {
     throw new BadRequestError("Tag is required");
   }
+
+  // foto thumbnail learning space
+  if (!req.files || !req.files["space_photo"]) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Photo is Required" });
+  }
+  const space_photo_url = req.files["space_photo"][0].filename;
 
   // service
   // console.log("Controller received:", req.body);

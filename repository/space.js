@@ -160,5 +160,3 @@ export const insertTags = async (client, { tag_name }) => {
 
   return queryResult.rows[0].tag_id;
 };
-
-

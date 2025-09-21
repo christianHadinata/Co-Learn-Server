@@ -51,10 +51,11 @@ export const create_learning_space = async ({
       user_id,
     });
 
+    const { learning_space_id } = result.rows[0];
+
     // Cek udah ada belum di tabel Tags yang tag_name nya == tagName
     for (const tagName of learning_space_prerequisites) {
       const existingId = await spaceRepo.getTagIdByName(client, tagName);
-      console.log(existingId);
 
       if (existingId) {
         await spaceRepo.insertSpaceTag(client, {

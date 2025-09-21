@@ -1,6 +1,10 @@
 import express from "express";
 
-import { create_learning_space, setPhoto, getAllSpaces, getSingleSpace } from "../controllers/space.js";
+import {
+  create_learning_space,
+  getAllSpaces,
+  getSingleSpace,
+} from "../controllers/space.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { fileUpload } from "../middleware/fileUploader.js";
 
