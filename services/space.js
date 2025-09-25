@@ -1,7 +1,3 @@
-import pool from "../db/db.js";
-import { BadRequestError } from "../errors/badRequestError.js";
-import * as spaceRepo from "../repository/space.js";
-
 export const getAllSpaces = async () => {
   const result = await spaceRepo.getAllSpaces();
   console.log(result);
@@ -28,7 +24,7 @@ export const getSingleSpace = async (learning_space_id) => {
   };
 };
 
-export const create_learning_space = async ({
+export const createLearningSpace = async ({
   space_title,
   space_photo_url,
   space_description,
