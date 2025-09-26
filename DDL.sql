@@ -46,6 +46,13 @@ CREATE TABLE Learning_Space_Member (
   PRIMARY KEY (learning_space_id, user_id)
 );
 
+CREATE TABLE Learning_Space_Visitors (
+  learning_space_id INT REFERENCES Learning_Spaces(learning_space_id) ON DELETE CASCADE,
+  user_id INT REFERENCES Users(user_id) ON DELETE CASCADE,
+  visited_at TIMESTAMP DEFAULT NOW(),
+  PRIMARY KEY (learning_space_id, user_id)
+)
+
 CREATE TABLE Learning_Space_Posts (
   post_id SERIAL PRIMARY KEY,
   post_title VARCHAR(255) NOT NULL,

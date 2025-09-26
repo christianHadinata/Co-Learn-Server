@@ -7,6 +7,7 @@ import {
   getSingleSpace,
 } from "../controllers/space.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
+import { optionalAuthMiddleware } from "../middleware/optionalAuthMiddleware.js";
 import { fileUpload } from "../middleware/fileUploader.js";
 
 const router = express.Router();
@@ -18,7 +19,7 @@ router.get("/", getAllSpaces);
 router.get("/related/:learning_space_id", getRelatedSpaces);
 
 //localhost:5000/api/v1/spaces/{learning_space_id}
-router.get("/:learning_space_id", getSingleSpace);
+router.get("/:learning_space_id", optionalAuthMiddleware, getSingleSpace);
 
 //  localhost:5000/api/v1/spaces/create_learning_space
 router.post(

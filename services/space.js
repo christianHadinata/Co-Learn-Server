@@ -13,7 +13,7 @@ export const getAllSpaces = async () => {
   return result;
 };
 
-export const getSingleSpace = async (learning_space_id) => {
+export const getSingleSpace = async (learning_space_id, user_id) => {
   const result = await spaceRepo.getSingleSpace(learning_space_id);
   if (!result) {
     throw new Error("Learning space not found");
@@ -21,11 +21,34 @@ export const getSingleSpace = async (learning_space_id) => {
 
   const prerequisites = await spaceRepo.getPrerequisites(learning_space_id);
 
-  console.log(prerequisites);
-  return {
-    ...result,
-    prerequisites,
-  };
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    if (user_id) {
+      // console.log("pepepepep");
+      await spaceRepo.upsertSpaceVisitor(client, {
+        learning_space_id,
+        user_id,
+      });
+    }
+
+    const activeUsers = await spaceRepo.getSpaceVisitors(learning_space_id);
+    // console.log(activeUsers);
+
+    await client.query("COMMIT");
+    return {
+      ...result,
+      prerequisites,
+      activeUsers,
+    };
+  } catch (error) {
+    console.log(error);
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
 export const create_learning_space = async ({

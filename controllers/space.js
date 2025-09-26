@@ -19,9 +19,16 @@ export const getSingleSpace = async (req, res) => {
   try {
     //request parameter id space yang terpilih
     const { learning_space_id } = req.params;
+    const user_id = req.user?.user_id;
+    console.log("user_id: " + user_id);
 
     // panggil service
-    const result = await spaceService.getSingleSpace(learning_space_id);
+    const result = await spaceService.getSingleSpace(
+      learning_space_id,
+      user_id
+    );
+
+    console.log(result);
     if (!result) {
       return res.status(400).json({ success: false });
     }

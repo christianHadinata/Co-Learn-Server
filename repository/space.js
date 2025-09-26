@@ -217,3 +217,52 @@ export const insertTags = async (client, { tag_name }) => {
 
   return queryResult.rows[0].tag_id;
 };
+
+export const upsertSpaceVisitor = async (
+  client,
+  { learning_space_id, user_id }
+) => {
+  const queryText = `
+  INSERT INTO
+    Learning_Space_Visitors(learning_space_id, user_id)
+  VALUES
+    ($1, $2)
+  ON CONFLICT (learning_space_id, user_id) 
+  DO UPDATE
+  SET
+    visited_at = NOW();
+  `;
+
+  const values = [learning_space_id, user_id];
+
+  const queryResult = await client.query(queryText, values);
+
+  return queryResult;
+};
+
+export const getSpaceVisitors = async (learning_space_id) => {
+  const queryText = `
+  SELECT
+    u.user_id,
+    u.user_name,
+    u.user_photo_url,
+    lsv.visited_at
+  FROM
+    Learning_Space_Visitors lsv
+  JOIN
+    Users u
+  ON
+    lsv.user_id = u.user_id
+  WHERE
+    lsv.learning_space_id = $1 AND lsv.visited_at > NOW() - INTERVAL '5 minute'
+  ORDER BY
+    lsv.visited_at DESC
+  LIMIT 5
+  `;
+
+  const values = [learning_space_id];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rows;
+};
