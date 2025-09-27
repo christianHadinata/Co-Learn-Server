@@ -125,3 +125,20 @@ export const getRelatedSpaces = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const getAllPosts = async (req, res) => {
+  try {
+    const { learning_space_id } = req.params;
+    if (!learning_space_id) {
+      throw new BadRequestError("Invalid learning space ID provided.");
+    }
+    const result = await spaceService.getAllPosts(learning_space_id);
+    if (!result) {
+      return res.status(400).json({ success: false });
+    }
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+

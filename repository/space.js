@@ -266,3 +266,25 @@ export const getSpaceVisitors = async (learning_space_id) => {
 
   return queryResult.rows;
 };
+
+export const getAllPosts = async (learning_space_id) => {
+  const quertext = `
+  SELECT
+    lsp.post_id,
+    lsp.post_title,
+    lsp.post_content,
+    lsp.created_at,
+    lsp.last_updated_at
+  FROM
+    Learning_Space_Posts lsp
+  WHERE
+    lsp.learning_space_id = $1
+  ORDER BY
+    lsp.created_at DESC
+  `
+  const values = [learning_space_id];
+
+  const queryResult = await pool.query(quertext, values);
+
+  return queryResult.rows;
+}

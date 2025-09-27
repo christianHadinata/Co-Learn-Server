@@ -121,3 +121,13 @@ export const getRelatedSpaces = async (learning_space_id) => {
 
   return result;
 };
+
+export const getAllPosts = async (learning_space_id) => {
+  const result = await spaceRepo.getAllPosts(learning_space_id);
+
+  if (!result) {
+    throw new Error("No posts found for this learning space");
+  }
+
+  return result;
+};
