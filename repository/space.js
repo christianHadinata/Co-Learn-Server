@@ -288,3 +288,18 @@ export const getAllPosts = async (learning_space_id) => {
 
   return queryResult.rows;
 }
+
+export const joinLearningSpace = async ({ learning_space_id, user_id }) => {
+  const queryText = `
+    INSERT INTO
+      Learning_Space_Member(learning_space_id, user_id)
+    VALUES
+      ($1, $2)
+    ON CONFLICT (learning_space_id, user_id) DO NOTHING;
+  `
+  const values = [learning_space_id, user_id];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rowCount > 0;
+}

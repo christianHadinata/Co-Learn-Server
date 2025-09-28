@@ -142,3 +142,35 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
+
+export const joinLearningSpace = async (req, res) => {
+  const { user_id } = req.user;
+
+  const { learning_space_id } = req.body;
+
+  if (!user_id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Login / Register is required" });
+  }
+
+  if (!learning_space_id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Learning Space ID is invalid" });
+  }
+
+  try {
+
+    await userService.joinLearningSpace({ user_id, learning_space_id });
+
+    return res.json({ success: true, message: "Successfully joined the space" });
+
+  } catch (error) {
+
+    console.error("Error joining learning space:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to join the space" });
+  }
+}
