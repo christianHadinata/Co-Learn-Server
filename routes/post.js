@@ -6,8 +6,8 @@ import { fileUpload } from "../middleware/fileUploader.js";
 
 const router = express.Router();
 
-router.post("/create_post", authMiddleware, createPost);
+router.post("/create_post/:learning_space_id", authMiddleware, createPost);
 
-router.get("/get_post", authMiddleware, getSinglePost);
+router.get("/get_post/:post_id", getSinglePost);
 
 export default router;

@@ -2,6 +2,8 @@ import * as postService from "../services/post.js";
 import { BadRequestError } from "../errors/badRequestError.js";
 
 export const createPost = async (req, res) => {
+  const { user_id } = req.user;
+  const { learning_space_id } = req.params;
   const { post_title, post_body } = req.body;
 
   if (!post_title) {
@@ -16,6 +18,8 @@ export const createPost = async (req, res) => {
     const result = await postService.createPost({
       post_title,
       post_body,
+      learning_space_id,
+      user_id,
     });
 
     return res.status(200).json({ success: true, data: result });
@@ -30,9 +34,11 @@ export const getSinglePost = async (req, res) => {
     const { post_id } = req.params;
 
     // panggil service
-    const result = await spaceService.getSinglePost(post_id);
+    const result = await postService.getSinglePost(post_id);
     if (!result) {
-      return res.status(400).json({ success: false });
+      return res
+        .status(400)
+        .json({ success: false, message: "Post not found." });
     }
 
     return res.status(200).json({ success: true, data: result });

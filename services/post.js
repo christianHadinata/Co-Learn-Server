@@ -2,14 +2,24 @@ import pool from "../db/db.js";
 import { BadRequestError } from "../errors/badRequestError.js";
 import * as postRepo from "../repository/post.js";
 
-export const createPost = async (post_title, post_body) => {
-  const result = await postRepo.getRelatedSpaces(post_title, post_body);
+export const createPost = async ({
+  post_title,
+  post_body,
+  learning_space_id,
+  user_id,
+}) => {
+  const result = await postRepo.createPost({
+    post_title,
+    post_body,
+    learning_space_id,
+    user_id,
+  });
 
   return result;
 };
 
 export const getSinglePost = async (post_id) => {
-  const queryResult = await userRepo.getSinglePostById(post_id);
+  const queryResult = await postRepo.getSinglePostById(post_id);
   const data = queryResult.rows[0];
 
   const result = {

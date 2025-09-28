@@ -1,36 +1,45 @@
 import pool from "../db/db.js";
 
-export const createPost = async (post_title, post_body) => {
+export const createPost = async ({
+  post_title,
+  post_body,
+  learning_space_id,
+  user_id,
+}) => {
   const queryText = `
   INSERT INTO
-    Learning_Space_Posts(post_title, post_body)
+    Learning_Space_Posts(post_title, post_body, learning_space_id, user_id)
   VALUES
-    ($1, $2)
+    ($1, $2, $3, $4)
   RETURNING
-    post_id
+    *
   `;
 
-  const values = [post_title, post_body];
+  const values = [post_title, post_body, learning_space_id, user_id];
 
-  const queryResult = await client.query(queryText, values);
+  const queryResult = await pool.query(queryText, values);
 
-  return queryResult.rows[0].post_id;
+  return queryResult.rows[0];
 };
 
-export const getSinglePostById = async (user_email) => {
+export const getSinglePostById = async (post_id) => {
   //  query ke db
   const queryText = `
     SELECT
-        p.post_id,    
-        p.post_title,
-        p.post_body,
-        p.created_at, 
-        p.learning_space_id,
-        p.user_id
+        lsp.post_id,    
+        lsp.post_title,
+        lsp.post_body,
+        lsp.created_at, 
+        lsp.learning_space_id,
+        lsp.user_id
     FROM
-        Learning_Space_Posts p
+        Learning_Space_Posts lsp
+    JOIN
+        Users u
+    ON
+        lsp.user_id = u.user_id
     WHERE 
-        p.post_id = $1
+        lsp.post_id = $1
     `;
 
   const values = [post_id];
@@ -40,5 +49,4 @@ export const getSinglePostById = async (user_email) => {
 
   //  result
   return queryResult;
-  // return queryResult.rows[0];
 };
