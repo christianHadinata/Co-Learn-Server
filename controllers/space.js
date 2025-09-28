@@ -210,3 +210,38 @@ export const leaveLearningSpace = async (req, res) => {
       .json({ success: false, message: "Failed to leave the space" });
   }
 };
+
+export const getIsJoinedStatusUser = async (req, res) => {
+  const { user_id } = req.user;
+  const { learning_space_id } = req.params;
+
+  if (!user_id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Login / Register is required" });
+  }
+
+  if (!learning_space_id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Learning Space ID is invalid" });
+  }
+
+  try {
+    const result = await spaceService.getIsJoinedStatusUser({
+      user_id,
+      learning_space_id,
+    });
+
+    return res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error get status user is joined the space:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get status user is joined the space",
+    });
+  }
+};

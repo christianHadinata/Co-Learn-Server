@@ -100,6 +100,24 @@ export const getSingleUser = async (user_email) => {
   return result;
 };
 
+export const getViewUserProfile = async (user_id) => {
+  const queryResult = await userRepo.getViewUserProfile(user_id);
+  const data = queryResult.rows[0];
+  const tagsResult = await userRepo.getTagsByUser(data.user_id);
+  const result = {
+    user_id: data.user_id,
+    user_name: data.user_name,
+    user_biography: data.user_biography,
+    user_country: data.user_country,
+    user_photo_url: data.user_photo_url,
+    user_interests: tagsResult,
+  };
+
+  console.log(result);
+
+  return result;
+};
+
 export const updateUserProfile = async ({
   user_id,
   user_name,

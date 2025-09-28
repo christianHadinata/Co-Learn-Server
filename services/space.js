@@ -1,4 +1,5 @@
 import * as spaceRepo from "../repository/space.js";
+import pool from "../db/db.js";
 
 export const getAllSpaces = async () => {
   const result = await spaceRepo.getAllSpaces();
@@ -139,4 +140,13 @@ export const leaveLearningSpace = async ({ user_id, learning_space_id }) => {
   await spaceRepo.leaveLearningSpace({ learning_space_id, user_id });
 
   return { status: "left" };
+};
+
+export const getIsJoinedStatusUser = async ({ user_id, learning_space_id }) => {
+  const result = await spaceRepo.getIsJoinedStatusUser({
+    learning_space_id,
+    user_id,
+  });
+
+  return result;
 };

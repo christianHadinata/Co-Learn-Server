@@ -71,6 +71,15 @@ export const getSingleUser = async (req, res) => {
   return res.json({ success: true, data: result });
 };
 
+export const getViewUserProfile = async (req, res) => {
+  let { user_id } = req.params;
+  user_id = parseInt(user_id);
+
+  const result = await userService.getViewUserProfile(user_id);
+
+  return res.json({ success: true, data: result });
+};
+
 export const updateUserProfile = async (req, res) => {
   const { user_id } = req.user;
   const { user_name, user_biography, user_country, user_interests } = req.body;

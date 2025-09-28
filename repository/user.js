@@ -29,6 +29,27 @@ export const getSingleUserByEmail = async (user_email) => {
   // return queryResult.rows[0];
 };
 
+export const getViewUserProfile = async (user_id) => {
+  const queryText = `
+    SELECT
+        u.user_id,    
+        u.user_name,
+        u.user_biography,
+        u.user_country,
+        u.user_photo_url
+    FROM
+        Users u
+    WHERE 
+        u.user_id = $1
+    `;
+
+  const values = [user_id];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult;
+};
+
 // insert user saat register
 export const insertUser = async (
   client,

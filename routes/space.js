@@ -8,6 +8,7 @@ import {
   getAllPosts,
   joinLearningSpace,
   leaveLearningSpace,
+  getIsJoinedStatusUser,
 } from "../controllers/space.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { optionalAuthMiddleware } from "../middleware/optionalAuthMiddleware.js";
@@ -40,5 +41,8 @@ router.post("/:learning_space_id/join", authMiddleware, joinLearningSpace);
 
 //localhost:5000/api/v1/spaces/:learning_space_id/leave
 router.post("/:learning_space_id/leave", authMiddleware, leaveLearningSpace);
+
+//localhost:5000/api/v1/spaces/:learning_space_id/leave
+router.get("/:learning_space_id/status", authMiddleware, getIsJoinedStatusUser);
 
 export default router;

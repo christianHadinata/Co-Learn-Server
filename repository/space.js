@@ -322,3 +322,19 @@ export const leaveLearningSpace = async ({ learning_space_id, user_id }) => {
 
   await pool.query(queryText, values);
 };
+
+export const getIsJoinedStatusUser = async ({ learning_space_id, user_id }) => {
+  const queryText = `
+  SELECT
+    lsm.joined_at
+  FROM
+    Learning_Space_Member lsm
+  WHERE
+    learning_space_id = $1 AND user_id = $2
+  `;
+  const values = [learning_space_id, user_id];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rowCount > 0;
+};
