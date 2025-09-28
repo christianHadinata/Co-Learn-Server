@@ -266,3 +266,40 @@ export const getSpaceVisitors = async (learning_space_id) => {
 
   return queryResult.rows;
 };
+
+export const getAllPosts = async (learning_space_id) => {
+  const quertext = `
+  SELECT
+    lsp.post_id,
+    lsp.post_title,
+    lsp.post_content,
+    lsp.created_at,
+    lsp.last_updated_at
+  FROM
+    Learning_Space_Posts lsp
+  WHERE
+    lsp.learning_space_id = $1
+  ORDER BY
+    lsp.created_at DESC
+  `
+  const values = [learning_space_id];
+
+  const queryResult = await pool.query(quertext, values);
+
+  return queryResult.rows;
+}
+
+export const joinLearningSpace = async ({ learning_space_id, user_id }) => {
+  const queryText = `
+    INSERT INTO
+      Learning_Space_Member(learning_space_id, user_id)
+    VALUES
+      ($1, $2)
+    ON CONFLICT (learning_space_id, user_id) DO NOTHING;
+  `
+  const values = [learning_space_id, user_id];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rowCount > 0;
+}

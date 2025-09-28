@@ -117,3 +117,35 @@ export const getRelatedSpaces = async (learning_space_id) => {
 
   return result;
 };
+
+export const getAllPosts = async (learning_space_id) => {
+  const result = await spaceRepo.getAllPosts(learning_space_id);
+
+  if (!result) {
+    throw new Error("No posts found for this learning space");
+  }
+
+  return result;
+};
+
+export const joinLearningSpace = async (req, res) => {
+  try {
+    const { learning_space_id } = req.params;
+    const user_id = req.user.id;
+
+    await client.query("BEGIN");
+    const result = await spaceService.getSingleSpace(learning_space_id, user_id);
+    await client.query("COMMIT");
+
+    if (!result) {
+      return res.status(400).json({ success: false });
+    }
+    return res.status(200).json({ success: true, data: result });
+
+  } catch (error) {
+    await client.query("ROLLBACK");
+    return res.status(400).json({ success: false, message: error.message });
+  } finally {
+    client.release();
+  }
+};
