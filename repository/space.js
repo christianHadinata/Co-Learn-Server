@@ -274,6 +274,7 @@ export const getAllPosts = async (learning_space_id) => {
     lsp.post_title,
     lsp.post_body,
     lsp.created_at,
+    lsp.learning_space_id,
     lsp.user_id,
     u.user_name,
     u.user_photo_url

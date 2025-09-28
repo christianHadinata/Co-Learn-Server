@@ -29,6 +29,8 @@ export const getSinglePost = async (post_id) => {
     created_at: data.created_at,
     learning_space_id: data.learning_space_id,
     user_id: data.user_id,
+    user_name: data.user_name,
+    user_photo_url: data.user_photo_url,
   };
   console.log(result);
 
