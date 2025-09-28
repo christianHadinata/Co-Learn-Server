@@ -39,7 +39,7 @@ export const getSingleSpace = async (req, res) => {
   }
 };
 
-export const create_learning_space = async (req, res) => {
+export const createLearningSpace = async (req, res) => {
   const { user_id } = req.user;
 
   //nerima input dari textfield FE
@@ -79,7 +79,7 @@ export const create_learning_space = async (req, res) => {
   // service
   // console.log("Controller received:", req.body);
   try {
-    const result = await spaceService.create_learning_space({
+    const result = await spaceService.createLearningSpace({
       space_title,
       space_photo_url,
       space_description,

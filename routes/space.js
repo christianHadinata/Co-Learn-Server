@@ -1,10 +1,11 @@
 import express from "express";
 
 import {
-  create_learning_space,
+  createLearningSpace,
   getAllSpaces,
   getRelatedSpaces,
   getSingleSpace,
+  createPost,
 } from "../controllers/space.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { optionalAuthMiddleware } from "../middleware/optionalAuthMiddleware.js";
@@ -26,7 +27,7 @@ router.post(
   "/create_learning_space",
   authMiddleware,
   fileUpload("./public"),
-  create_learning_space
+  createLearningSpace
 );
 
 export default router;
