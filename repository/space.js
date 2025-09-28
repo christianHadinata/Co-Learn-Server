@@ -268,26 +268,32 @@ export const getSpaceVisitors = async (learning_space_id) => {
 };
 
 export const getAllPosts = async (learning_space_id) => {
-  const quertext = `
+  const queryText = `
   SELECT
     lsp.post_id,
     lsp.post_title,
-    lsp.post_content,
+    lsp.post_body,
     lsp.created_at,
-    lsp.last_updated_at
+    lsp.user_id,
+    u.user_name,
+    u.user_photo_url
   FROM
     Learning_Space_Posts lsp
+  JOIN
+    Users u
+  ON
+    lsp.user_id = u.user_id
   WHERE
     lsp.learning_space_id = $1
   ORDER BY
     lsp.created_at DESC
-  `
+  `;
   const values = [learning_space_id];
 
-  const queryResult = await pool.query(quertext, values);
+  const queryResult = await pool.query(queryText, values);
 
   return queryResult.rows;
-}
+};
 
 export const joinLearningSpace = async ({ learning_space_id, user_id }) => {
   const queryText = `
@@ -295,11 +301,24 @@ export const joinLearningSpace = async ({ learning_space_id, user_id }) => {
       Learning_Space_Member(learning_space_id, user_id)
     VALUES
       ($1, $2)
-    ON CONFLICT (learning_space_id, user_id) DO NOTHING;
-  `
+    RETURNING
+      *
+  `;
   const values = [learning_space_id, user_id];
 
   const queryResult = await pool.query(queryText, values);
 
-  return queryResult.rowCount > 0;
-}
+  return queryResult.rows[0];
+};
+
+export const leaveLearningSpace = async ({ learning_space_id, user_id }) => {
+  const queryText = `
+    DELETE FROM
+      Learning_Space_Member
+    WHERE
+      learning_space_id = $1 AND user_id = $2
+  `;
+  const values = [learning_space_id, user_id];
+
+  await pool.query(queryText, values);
+};

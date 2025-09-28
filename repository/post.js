@@ -31,7 +31,9 @@ export const getSinglePostById = async (post_id) => {
         lsp.post_body,
         lsp.created_at, 
         lsp.learning_space_id,
-        lsp.user_id
+        lsp.user_id,
+        u.user_name,
+        u.user_photo_url
     FROM
         Learning_Space_Posts lsp
     JOIN

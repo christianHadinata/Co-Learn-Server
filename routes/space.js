@@ -6,6 +6,8 @@ import {
   getRelatedSpaces,
   getSingleSpace,
   getAllPosts,
+  joinLearningSpace,
+  leaveLearningSpace,
 } from "../controllers/space.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { optionalAuthMiddleware } from "../middleware/optionalAuthMiddleware.js";
@@ -16,11 +18,14 @@ const router = express.Router();
 //localhost:5000/api/v1/spaces
 router.get("/", getAllSpaces);
 
-//localhost:5000/api/v1/spaces/related/{learning_space_id}
+//localhost:5000/api/v1/spaces/related/:learning_space_id
 router.get("/related/:learning_space_id", getRelatedSpaces);
 
-//localhost:5000/api/v1/spaces/{learning_space_id}
-router.get("/:learning_space_id", optionalAuthMiddleware, getSingleSpace, getAllPosts);
+//localhost:5000/api/v1/spaces/:learning_space_id
+router.get("/:learning_space_id", optionalAuthMiddleware, getSingleSpace);
+
+//localhost:5000/api/v1/spaces/:learning_space_id/posts
+router.get("/:learning_space_id/posts", getAllPosts);
 
 //  localhost:5000/api/v1/spaces/create_learning_space
 router.post(
@@ -29,5 +34,11 @@ router.post(
   fileUpload("./public"),
   createLearningSpace
 );
+
+//localhost:5000/api/v1/spaces/:learning_space_id/join
+router.post("/:learning_space_id/join", authMiddleware, joinLearningSpace);
+
+//localhost:5000/api/v1/spaces/:learning_space_id/leave
+router.post("/:learning_space_id/leave", authMiddleware, leaveLearningSpace);
 
 export default router;
