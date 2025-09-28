@@ -1,7 +1,7 @@
 import express from "express";
 
 import {
-  create_learning_space,
+  createLearningSpace,
   getAllSpaces,
   getRelatedSpaces,
   getSingleSpace,
@@ -27,7 +27,7 @@ router.post(
   "/create_learning_space",
   authMiddleware,
   fileUpload("./public"),
-  create_learning_space
+  createLearningSpace
 );
 
 export default router;

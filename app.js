@@ -39,12 +39,17 @@ app.use(morgan("dev"));
 // Routes import
 import userRoute from "./routes/user.js";
 import spaceRoute from "./routes/space.js";
+import postRoute from "./routes/post.js";
 // Routes
 
 // localhost:5000/api/v1/users
 app.use("/api/v1/users", userRoute);
 
+// localhost:5000/api/v1/spaces
 app.use("/api/v1/spaces", spaceRoute);
+
+// localhost:5000/api/v1/posts
+app.use("/api/v1/posts", postRoute);
 
 //Error handling
 app.use(errorHandler);
