@@ -22,6 +22,21 @@ export const createPost = async ({
   return queryResult.rows[0];
 };
 
+export const updateLastUpdateLearningSpace = async (learning_space_id) => {
+  const queryText = `
+  UPDATE
+    Learning_Spaces
+  SET
+    last_updated_at = NOW()
+  WHERE
+    learning_space_id = $1
+  `;
+
+  const values = [learning_space_id];
+
+  await pool.query(queryText, values);
+};
+
 export const getSinglePostById = async (post_id) => {
   //  query ke db
   const queryText = `

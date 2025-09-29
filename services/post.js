@@ -15,6 +15,8 @@ export const createPost = async ({
     user_id,
   });
 
+  await postRepo.updateLastUpdateLearningSpace(learning_space_id);
+
   return result;
 };
 
