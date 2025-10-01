@@ -46,3 +46,44 @@ export const getSinglePost = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const createComment = async (req, res) => {
+  const { user_id } = req.user;
+  const { post_id } = req.params;
+  const { comment_body } = req.body;
+
+  if (!comment_body) {
+    throw new BadRequestError("Comment cannot be empty.");
+  }
+
+  try {
+    const result = await postService.createComment({
+      post_id,
+      user_id,
+      comment_body,
+    });
+
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const getAllComments = async (req, res) => {
+  try {
+    //request parameter id space yang terpilih
+    const { post_id } = req.params;
+
+    // panggil service
+    const result = await postService.getAllComments(post_id);
+    if (!result) {
+      return res
+        .status(200)
+        .json({ success: true, message: "No Comment Here." });
+    }
+
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};

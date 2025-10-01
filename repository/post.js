@@ -52,3 +52,51 @@ export const getSinglePostById = async (post_id) => {
   //  result
   return queryResult;
 };
+
+export const createComment = async ({ post_id, user_id, comment_body }) => {
+  const queryText = `
+  INSERT INTO
+    Post_Comments(post_id, user_id, comment_body)
+  VALUES
+    ($1, $2, $3)
+  RETURNING
+    *
+  `;
+
+  const values = [post_id, user_id, comment_body];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rows[0];
+};
+
+export const getAllSpaces = async (post_id) => {
+  //query ke db
+  const queryText = `
+    SELECT
+        c.comment_id
+        c.post_id,
+        c.user_id,
+        c.comment_body,
+        c.created_at,
+        c.user_name,
+        c.user_photo_url
+    FROM
+        Post_Comments c
+    LEFT JOIN
+        Users u
+        ON c.user_id = u.user_id
+    WHERE
+        post_id = $1
+    ORDER BY
+        u.created_at DESC;
+    `;
+
+  const values = [post_id];
+
+  // execute query
+  const queryResult = await pool.query(queryText, values);
+
+  //result
+  return queryResult.rows;
+};
