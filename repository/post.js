@@ -67,3 +67,65 @@ export const getSinglePostById = async (post_id) => {
   //  result
   return queryResult;
 };
+
+export const getPostVotes = async (post_id) => {
+  const queryText = `
+  SELECT
+    (SELECT COUNT(*) FROM Post_Votes WHERE post_id = $1 AND vote_type = 'upvote') AS upvotes,
+    (SELECT COUNT(*) FROM Post_Votes WHERE post_id = $1 AND vote_type = 'downvote') AS downvotes
+  FROM
+    Post_Votes
+  WHERE
+    post_id = $1
+  `
+  const values = [post_id];
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rows;
+};
+
+export const insertPostVote = async ({ post_id, user_id, vote_type }) => {
+  const queryText = `
+  INSERT INTO Post_Votes (post_id, user_id, vote_type)
+  VALUES ($1, $2, $3)
+  ON CONFLICT (post_id, user_id) DO UPDATE SET vote_type = EXCLUDED.vote_type
+  RETURNING *
+  `
+  const values = [post_id, user_id, vote_type];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rows;
+}
+
+export const getCommentVotes = async (comment_id) => {
+  const queryText = `
+  SELECT
+    (SELECT COUNT(*) FROM Comment_Votes CV WHERE CV.comment_id = $1 AND CV.vote_type = 'upvote') AS upvotes,
+    (SELECT COUNT(*) FROM Comment_Votes CV WHERE CV.comment_id = $1 AND CV.vote_type = 'downvote') AS downvotes
+  FROM
+    Comment_Votes CV
+  WHERE
+    CV.comment_id = $1
+  `
+
+  const values = [comment_id];
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rows;
+}
+
+export const insertCommentVote = async ({ comment_id, user_id, vote_type }) => {
+  const queryText = `
+  INSERT INTO Comment_Votes (comment_id, user_id, vote_type)
+  VALUES ($1, $2, $3)
+  ON CONFLICT (comment_id, user_id) DO UPDATE SET vote_type = EXCLUDED.vote_type
+  RETURNING *
+  `
+
+  const values = [comment_id, user_id, vote_type];
+
+  const queryResult = await pool.query(queryText, values);
+
+  return queryResult.rows;
+}
