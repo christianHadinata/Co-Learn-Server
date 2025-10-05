@@ -32,9 +32,10 @@ export const getSinglePost = async (req, res) => {
   try {
     //request parameter id space yang terpilih
     const { post_id } = req.params;
+    const user_id = req.user ? req.user.user_id : null;
 
     // panggil service
-    const result = await postService.getSinglePost(post_id);
+    const result = await postService.getSinglePost({ post_id, user_id });
     if (!result) {
       return res
         .status(400)
@@ -51,6 +52,8 @@ export const createComment = async (req, res) => {
   const { user_id } = req.user;
   const { post_id } = req.params;
   const { comment_body } = req.body;
+
+  console.log({ post_id, user_id, comment_body });
 
   if (!comment_body) {
     throw new BadRequestError("Comment cannot be empty.");
@@ -73,9 +76,13 @@ export const getAllComments = async (req, res) => {
   try {
     //request parameter id space yang terpilih
     const { post_id } = req.params;
+    const user_id = req.user ? req.user.user_id : null;
 
     // panggil service
-    const result = await postService.getAllComments(post_id);
+    const result = await postService.getAllComments({
+      post_id,
+      user_id,
+    });
     if (!result) {
       return res
         .status(200)
@@ -115,6 +122,8 @@ export const insertCommentVote = async (req, res) => {
     const { comment_id } = req.params;
     const { user_id } = req.user;
     const { vote_type } = req.body;
+
+    console.log({ comment_id, user_id, vote_type });
     if (!["upvote", "downvote"].includes(vote_type)) {
       throw new BadRequestError("Vote type must be 'upvote' or 'downvote'.");
     }

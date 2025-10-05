@@ -20,8 +20,8 @@ export const createPost = async ({
   return result;
 };
 
-export const getSinglePost = async (post_id) => {
-  const queryResult = await postRepo.getSinglePostById(post_id);
+export const getSinglePost = async ({ post_id, user_id }) => {
+  const queryResult = await postRepo.getSinglePostById({ post_id, user_id });
   const data = queryResult.rows[0];
 
   const result = {
@@ -35,6 +35,7 @@ export const getSinglePost = async (post_id) => {
     user_photo_url: data.user_photo_url,
     upvote_count: data.upvote_count,
     downvote_count: data.downvote_count,
+    current_user_vote_type: data.current_user_vote_type,
   };
   console.log(result);
 
@@ -42,17 +43,35 @@ export const getSinglePost = async (post_id) => {
 };
 
 export const createComment = async ({ post_id, user_id, comment_body }) => {
-  const result = await postRepo.createComment({
-    post_id,
-    user_id,
-    comment_body,
-  });
+  const client = await pool.connect();
 
-  return result;
+  console.log({ post_id, user_id, comment_body });
+
+  try {
+    await client.query("BEGIN");
+    const comment_id = await postRepo.createComment(client, {
+      post_id,
+      user_id,
+      comment_body,
+    });
+
+    const result = await postRepo.getFullCommentDetails(client, comment_id);
+
+    console.log(result);
+
+    await client.query("COMMIT");
+    return result;
+  } catch (error) {
+    console.log(error);
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
-export const getAllComments = async (post_id) => {
-  const result = await postRepo.getAllComments(post_id);
+export const getAllComments = async ({ post_id, user_id }) => {
+  const result = await postRepo.getAllComments({ post_id, user_id });
   console.log(result);
 
   return result;
