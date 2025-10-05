@@ -50,12 +50,8 @@ export const createComment = async ({ post_id, user_id, comment_body }) => {
 };
 
 export const getAllComments = async (post_id) => {
-  const result = await spaceRepo.getAllComments(post_id);
+  const result = await postRepo.getAllComments(post_id);
   console.log(result);
-
-  if (!result) {
-    throw new Error("No Comment Here");
-  }
 
   return result;
 };

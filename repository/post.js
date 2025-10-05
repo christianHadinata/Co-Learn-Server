@@ -85,26 +85,31 @@ export const createComment = async ({ post_id, user_id, comment_body }) => {
   return queryResult.rows[0];
 };
 
-export const getAllSpaces = async (post_id) => {
+export const getAllComments = async (post_id) => {
   //query ke db
   const queryText = `
     SELECT
-        c.comment_id
-        c.post_id,
+        c.comment_id,
         c.user_id,
         c.comment_body,
         c.created_at,
-        c.user_name,
-        c.user_photo_url
+        u.user_name,
+        u.user_photo_url,
+        SUM(CASE WHEN cv.vote_type = 'upvote' THEN 1 ELSE 0 END) AS upvote_count,
+        SUM(CASE WHEN cv.vote_type = 'downvote' THEN 1 ELSE 0 END) AS downvote_count
     FROM
         Post_Comments c
-    LEFT JOIN
+    JOIN
         Users u
         ON c.user_id = u.user_id
+    LEFT JOIN
+        Comment_Votes cv ON c.comment_id = cv.comment_id
     WHERE
-        post_id = $1
+        c.post_id = $1
+    GROUP BY
+      c.comment_id, c.user_id, u.user_name, u.user_photo_url
     ORDER BY
-        u.created_at DESC;
+        c.created_at DESC;
     `;
 
   const values = [post_id];
