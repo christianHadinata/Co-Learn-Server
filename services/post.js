@@ -33,6 +33,8 @@ export const getSinglePost = async (post_id) => {
     user_id: data.user_id,
     user_name: data.user_name,
     user_photo_url: data.user_photo_url,
+    upvote_count: data.upvote_count,
+    downvote_count: data.downvote_count,
   };
   console.log(result);
 
@@ -54,4 +56,66 @@ export const getAllComments = async (post_id) => {
   console.log(result);
 
   return result;
+};
+
+export const insertPostVote = async ({ post_id, user_id, vote_type }) => {
+  const vote = await postRepo.getUserVoteOnPost({ post_id, user_id });
+
+  if (vote) {
+    if (vote.vote_type === vote_type) {
+      // User menghapus vote yang sama
+      const result = await postRepo.removePostVote({ post_id, user_id });
+      console.log(result);
+      return { message: "Vote removed." };
+    } else {
+      // User ganti vote (upsert)
+      const result = await postRepo.upsertPostVote({
+        post_id,
+        user_id,
+        vote_type,
+      });
+      console.log(result);
+      return { message: "Vote updated." };
+    }
+  } else {
+    // user insert new vote (upsert)
+    const result = await postRepo.upsertPostVote({
+      post_id,
+      user_id,
+      vote_type,
+    });
+    console.log(result);
+    return { message: "Vote added." };
+  }
+};
+
+export const insertCommentVote = async ({ comment_id, user_id, vote_type }) => {
+  const vote = await postRepo.getUserVoteOnComment({ comment_id, user_id });
+
+  if (vote) {
+    if (vote.vote_type === vote_type) {
+      // User menghapus vote yang sama
+      const result = await postRepo.removeCommentVote({ comment_id, user_id });
+      console.log(result);
+      return { message: "Vote removed." };
+    } else {
+      // User ganti vote
+      const result = await postRepo.upsertCommentVote({
+        comment_id,
+        user_id,
+        vote_type,
+      });
+      console.log(result);
+      return { message: "Vote updated." };
+    }
+  } else {
+    // user insert new vote
+    const result = await postRepo.upsertCommentVote({
+      comment_id,
+      user_id,
+      vote_type,
+    });
+    console.log(result);
+    return { message: "Vote added." };
+  }
 };

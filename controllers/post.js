@@ -87,3 +87,45 @@ export const getAllComments = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const insertPostVote = async (req, res) => {
+  try {
+    const { post_id } = req.params;
+    const { user_id } = req.user;
+    const { vote_type } = req.body;
+
+    if (!["upvote", "downvote"].includes(vote_type)) {
+      throw new BadRequestError("Vote type must be 'upvote' or 'downvote'.");
+    }
+
+    const result = await postService.insertPostVote({
+      post_id,
+      user_id,
+      vote_type,
+    });
+
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const insertCommentVote = async (req, res) => {
+  try {
+    const { comment_id } = req.params;
+    const { user_id } = req.user;
+    const { vote_type } = req.body;
+    if (!["upvote", "downvote"].includes(vote_type)) {
+      throw new BadRequestError("Vote type must be 'upvote' or 'downvote'.");
+    }
+    const result = await postService.insertCommentVote({
+      comment_id,
+      user_id,
+      vote_type,
+    });
+
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
