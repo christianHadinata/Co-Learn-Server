@@ -38,3 +38,24 @@ export const getSinglePost = async (post_id) => {
 
   return result;
 };
+
+export const createComment = async ({ post_id, user_id, comment_body }) => {
+  const result = await postRepo.createComment({
+    post_id,
+    user_id,
+    comment_body,
+  });
+
+  return result;
+};
+
+export const getAllComments = async (post_id) => {
+  const result = await spaceRepo.getAllComments(post_id);
+  console.log(result);
+
+  if (!result) {
+    throw new Error("No Comment Here");
+  }
+
+  return result;
+};
