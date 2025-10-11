@@ -138,3 +138,31 @@ export const insertCommentVote = async ({ comment_id, user_id, vote_type }) => {
     return { message: "Vote added." };
   }
 };
+
+// Annotations
+export const getAnnotations = async ({ post_id, user_id }) => {
+  const annotations = await postRepo.getAnnotations({
+    post_id,
+    user_id,
+  });
+  return annotations;
+};
+
+export const createAnnotations = async ({
+  post_id,
+  user_id,
+  highlighted_text,
+  annotation_text,
+  start_index,
+  end_index,
+}) => {
+  const newAnnotation = await postRepo.createAnnotations({
+    post_id,
+    user_id,
+    highlighted_text,
+    annotation_text,
+    start_index,
+    end_index,
+  });
+  return newAnnotation;
+};

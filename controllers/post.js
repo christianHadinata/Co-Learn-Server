@@ -138,3 +138,53 @@ export const insertCommentVote = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
+
+// Annotations
+export const getAnnotations = async (req, res) => {
+  const { post_id } = req.params;
+  const { user_id } = req.user;
+
+  try {
+    const annotations = await postService.getAnnotations({ post_id, user_id });
+
+    res.status(200).json({
+      message: "Annotations retrieved successfully.",
+      data: annotations,
+    });
+  } catch (error) {
+    console.error("Error fetching annotations:", error);
+    res.status(500).json({ message: "Failed to retrieve annotations." });
+  }
+};
+
+export const createAnnotations = async (req, res) => {
+  const { post_id } = req.params;
+  const { user_id } = req.user;
+  const { highlighted_text, annotation_text, start_index, end_index } =
+    req.body;
+
+  console.log({ highlighted_text, annotation_text, start_index, end_index });
+  if (!highlighted_text || !start_index || end_index === undefined) {
+    return res
+      .status(400)
+      .json({ message: "Highlighted text and index are required." });
+  }
+
+  try {
+    const newAnnotation = await postService.createAnnotations({
+      post_id,
+      user_id,
+      highlighted_text,
+      annotation_text,
+      start_index,
+      end_index,
+    });
+    res.status(201).json({
+      message: "Annotation added successfully.",
+      data: newAnnotation,
+    });
+  } catch (error) {
+    console.error("Error adding annotation:", error);
+    res.status(500).json({ message: "Failed to add annotation." });
+  }
+};

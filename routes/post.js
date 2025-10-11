@@ -7,6 +7,8 @@ import {
   getAllComments,
   insertCommentVote,
   insertPostVote,
+  getAnnotations,
+  createAnnotations,
 } from "../controllers/post.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { optionalAuthMiddleware } from "../middleware/optionalAuthMiddleware.js";
@@ -25,5 +27,10 @@ router.get("/get_comments/:post_id", optionalAuthMiddleware, getAllComments);
 router.post("/vote_comment/:comment_id", authMiddleware, insertCommentVote);
 
 router.post("/vote_post/:post_id", authMiddleware, insertPostVote);
+
+// annotations
+router.get("/annotations/:post_id", authMiddleware, getAnnotations);
+
+router.post("/annotations/:post_id", authMiddleware, createAnnotations);
 
 export default router;

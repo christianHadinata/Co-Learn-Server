@@ -91,7 +91,7 @@ CREATE TABLE annotations (
     post_id INT REFERENCES Learning_Space_Posts(post_id) ON DELETE CASCADE,
     user_id INT REFERENCES Users(user_id) ON DELETE CASCADE,
     highlighted_text TEXT NOT NULL,
-    annotation_text TEXT, -- from text field where user can enter their thoughts about the highlighted text.
+    annotation_text TEXT, -- ini isinya catetan user ttg annotation
     start_index INT NOT NULL,
     end_index INT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()

@@ -90,18 +90,22 @@ export const getRelatedSpaces = async (learning_space_id) => {
       ls.space_photo_url,
       ls.last_updated_at,
       COUNT(lsp2.tag_id) AS matching_tag_count,
-      COUNT(lsm.user_id) AS member_count
+      (
+        SELECT
+          COUNT(user_id)
+        FROM
+          Learning_Space_Member
+        WHERE
+          learning_space_id = lsp2.learning_space_id
+      ) AS member_count
     FROM
       Learning_Space_Prerequisites lsp1
     JOIN
-      Learning_Space_Prerequisites lsp2 
+      Learning_Space_Prerequisites lsp2
       ON lsp1.tag_id = lsp2.tag_id
     JOIN
-      Learning_Spaces ls 
+      Learning_Spaces ls
       ON lsp2.learning_space_id = ls.learning_space_id
-    LEFT JOIN
-      Learning_Space_Member lsm
-      ON lsp2.learning_space_id = lsm.learning_space_id
     WHERE
       lsp1.learning_space_id = $1
       AND lsp2.learning_space_id != $1

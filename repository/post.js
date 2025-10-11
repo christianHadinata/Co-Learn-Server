@@ -257,3 +257,62 @@ export const removeCommentVote = async ({ comment_id, user_id }) => {
 
   return queryResult.rowCount > 0;
 };
+
+// annotations
+export const getAnnotations = async ({ post_id, user_id }) => {
+  const queryText = `
+  SELECT
+    a.annotation_id,
+    a.post_id,
+    a.highlighted_text,
+    a.annotation_text,
+    a.start_index,
+    a.end_index,
+    a.created_at,
+    u.user_id,
+    u.user_name,
+    u.user_photo_url
+  FROM
+    annotations a
+  JOIN
+    Users u ON a.user_id = u.user_id
+  WHERE
+    a.post_id = $1 AND a.user_id = $2
+  ORDER BY
+    a.created_at ASC;
+  `;
+  const values = [post_id, user_id];
+
+  const result = await pool.query(queryText, values);
+  return result.rows;
+};
+
+export const createAnnotations = async ({
+  post_id,
+  user_id,
+  highlighted_text,
+  annotation_text,
+  start_index,
+  end_index,
+}) => {
+  const queryText = `
+  INSERT INTO 
+    annotations (post_id, user_id, highlighted_text, annotation_text, start_index, end_index)
+  VALUES 
+    ($1, $2, $3, $4, $5, $6)
+  RETURNING 
+    *;
+  `;
+
+  const values = [
+    post_id,
+    user_id,
+    highlighted_text,
+    annotation_text,
+    start_index,
+    end_index,
+  ];
+
+  const result = await pool.query(queryText, values);
+  return result.rows[0];
+};
