@@ -51,7 +51,7 @@ CREATE TABLE Learning_Space_Visitors (
   user_id INT REFERENCES Users(user_id) ON DELETE CASCADE,
   visited_at TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY (learning_space_id, user_id)
-)
+);
 
 CREATE TABLE Learning_Space_Posts (
   post_id SERIAL PRIMARY KEY,
@@ -96,20 +96,4 @@ CREATE TABLE annotations (
     end_index INT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
-
-
--- Notes:
-/*
-
-1. user_role itu sengaja digituin, siapa tau next time ada role "admin" atau apa, dll.
-
-2. user_photo_url itu buat di profile, nanti pake multer
-
-3. Buat interest tags (yg nanti pake React tags) itu logic nya jadi gini, user kan bisa nambahin tag apapun, nah di BE, cek tag itu ada ga di table Tags. Kalau ada, dapetin tag_id nya, terus tinggal masukkin ke table User_Interests pasangan user_id sama tag_id. Kalau ga ada, maka buat row baru di Tags (tag_name nya tag baru dari user itu), terus dapetin tag_id, terus masukkin ke table User_Interests pasangan user_id sama tag_id.
-
-4. Kalau mau pake zona waktu, pake TIMESTAMPTZ buat kaya created_at atau last_updated_at
-
-5. annotations itu kan bisa pake Annotate.js, tapi belum ngerti. Kalau logika manual nya jadi gini kaya merangkai puzzle (kata). Jadi misal gini a = kata biasa, h = highlight. Misal post tuh isi kata-kata nya gini aaaaa h aaaaaa h aaa. Nah ini logikanya jadi merangkai ke array result gitu, jadi bakal aaaaa dulu, terus jadi aaaaa h, terus jadi aaaaa h aaaaaa, terus jadi aaaaa h aaaaaa h, terus jadi aaaaa h aaaaaa h aaa. Makanya ada start_index sama end_index.
-
-*/
 
